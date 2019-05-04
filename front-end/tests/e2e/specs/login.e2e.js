@@ -1,12 +1,9 @@
-// For authoring Nightwatch tests, see
-// http://nightwatchjs.org/guide#usage
-
 module.exports = {
-  'login test': browser => {
-    browser
-      .url(process.env.VUE_DEV_SERVER_URL + 'login')
-      .waitForElementVisible('#app', 5000)
-      .assert.containsText('h1', 'TaskManager')
-      .end()
-  }
+    'login test': function (browser) {
+        browser
+            .url(process.env.VUE_DEV_SERVER_URL + 'login')
+            .waitForElementVisible('#app', 5000)
+            .assert.containsText('div', 'Open source task management tool')
+            .end()
+    }
 }

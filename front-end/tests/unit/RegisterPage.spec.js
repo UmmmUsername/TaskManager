@@ -4,12 +4,14 @@ import VueRouter from 'vue-router'
 import Vuelidate from 'vuelidate'
 import registrationService from '@/services/registration'
 
+// Adding Vue Router to the test so that
+// we can access vm.$router
 const localVue = createLocalVue()
 localVue.use(VueRouter)
 localVue.use(Vuelidate)
-
 const router = new VueRouter()
 
+// Mock dependency registratioService
 jest.mock('@/services/registration')
 
 describe('RegisterPage.vue', () => {
@@ -61,13 +63,12 @@ describe('RegisterPage.vue', () => {
 
     it('should have form inputs bound with data model', () => {
         const username = 'sunny'
-        const emailAddress = 'sunny@local'
+        const emailAddress = 'sunny@taskagile.com'
         const password = 'VueJsRocks!'
 
         wrapper.vm.form.username = username
         wrapper.vm.form.emailAddress = emailAddress
         wrapper.vm.form.password = password
-
         expect(fieldUsername.element.value).toEqual(username)
         expect(fieldEmailAddress.element.value).toEqual(emailAddress)
         expect(fieldPassword.element.value).toEqual(password)
@@ -75,10 +76,8 @@ describe('RegisterPage.vue', () => {
 
     it('should have form submit event handler `submitForm`', () => {
         const stub = jest.fn()
-
         wrapper.setMethods({ submitForm: stub })
         buttonSubmit.trigger('submit')
-
         expect(stub).toBeCalled()
     })
 
@@ -87,12 +86,12 @@ describe('RegisterPage.vue', () => {
         const stub = jest.fn()
         wrapper.vm.$router.push = stub
         wrapper.vm.form.username = 'sunny'
-        wrapper.vm.form.emailAddress = 'sunny@taskmanager.com'
+        wrapper.vm.form.emailAddress = 'sunny@taskagile.com'
         wrapper.vm.form.password = 'JestRocks!'
         wrapper.vm.submitForm()
         expect(registerSpy).toBeCalled()
         await wrapper.vm.$nextTick()
-        expect(stub).toHaveBeenCalledWith({ name: 'LoginPage' })
+        expect(stub).toHaveBeenCalledWith({ name: 'login' })
     })
 
     it('should fail it is not a new user', async () => {
@@ -109,11 +108,26 @@ describe('RegisterPage.vue', () => {
     })
 
     it('should fail when the email address is invalid', () => {
-        const spy = jest.spyOn(registrationService, 'register')
+        wrapper.vm.form.username = 'test'
         wrapper.vm.form.emailAddress = 'bad-email-address'
+        wrapper.vm.form.password = 'JestRocks!'
         wrapper.vm.submitForm()
-        expect(spy).not.toHaveBeenCalled()
-        spy.mockReset()
-        spy.mockRestore()
+        expect(registerSpy).not.toHaveBeenCalled()
+    })
+
+    it('should fail when the username is invalid', () => {
+        wrapper.vm.form.username = 'a'
+        wrapper.vm.form.emailAddress = 'test@taskagile.com'
+        wrapper.vm.form.password = 'JestRocks!'
+        wrapper.vm.submitForm()
+        expect(registerSpy).not.toHaveBeenCalled()
+    })
+
+    it('should fail when the password is invalid', () => {
+        wrapper.vm.form.username = 'test'
+        wrapper.vm.form.emailAddress = 'test@taskagile.com'
+        wrapper.vm.form.password = 'bad!'
+        wrapper.vm.submitForm()
+        expect(registerSpy).not.toHaveBeenCalled()
     })
 })

@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
                 command.getEmailAddress(),
                 command.getPassword());
 
-//        sendWelcomeMessage(newUser);
+        sendWelcomeMessage(newUser);
         domainEventPublisher.publish(new UserRegisteredEvent(newUser));
     }
 

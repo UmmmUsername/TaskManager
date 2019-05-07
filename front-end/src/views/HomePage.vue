@@ -1,130 +1,133 @@
 <template>
-  <div class="page-header d-flex align-content-center">
-    <div class="logo" @click="goHome()">
-      <font-awesome-icon icon="home" class="home-icon" />
-      <img src="/static/images/logo.png">
-    </div>
-    <div class="boards-menu-toggle">
-      <div class="dropdown">
-        <button class="btn dropdown-toggle" type="button" id="boardsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Boards
-        </button>
-        <div class="dropdown-menu" aria-labelledby="boardsMenu">
-          <div v-show="!hasBoards" class="dropdown-item">No boards</div>
-          <div v-show="hasBoards">
-            <h6 class="dropdown-header" v-show="personalBoards.length">Personal Boards</h6>
-            <button v-for="board in personalBoards" v-bind:key="board.id" @click="openBoard(board)"
-                    class="dropdown-item" type="button">{{ board.name }}</button>
-            <div v-for="team in teamBoards" v-bind:key="'t' + team.id">
-              <h6 class="dropdown-header">{{ team.name }}</h6>
-              <button v-for="board in team.boards" v-bind:key="board.id" @click="openBoard(board)"
-                      class="dropdown-item" type="button">{{ board.name }}</button>
-            </div>
+  <div>
+    <PageHeader />
+    <div class="boards-container">
+      <div class="boards-section">
+        <h2 class="section-title">{{ $t('homePage.personalBoards') }}</h2>
+        <div class="boards d-flex align-content-start flex-wrap">
+          <div class="board list-inline-item" v-for="board in personalBoards"
+               v-bind:key="board.id" @click="openBoard(board)">
+            <h3>{{ board.name }}</h3>
+            <p>{{ board.description }}</p>
+          </div>
+          <div class="board add list-inline-item" @click="createBoard()">
+            <font-awesome-icon icon="plus" />
+            <div>{{ $t('homePage.createNewBoard') }}</div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="search-box flex-fill">
-      <div class="search-wrapper">
-        <font-awesome-icon icon="search" class="search-icon" />
-        <input type="text" placeholder="Search" class="form-control form-control-sm" />
-      </div>
-    </div>
-    <div class="profile-menu-toggle">
-      <div class="dropdown">
-        <button class="btn dropdown-toggle" type="button" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ user.name }}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="profileMenu">
-          <button class="dropdown-item" type="button">Profile</button>
-          <button class="dropdown-item" type="button">Sign Out</button>
+      <div class="boards-section" v-for="team in teamBoards" v-bind:key="team.id">
+        <h2 class="section-title">{{ team.name }}</h2>
+        <div class="boards d-flex align-content-start flex-wrap">
+          <div class="board list-inline-item" v-for="board in team.boards"
+               v-bind:key="board.id" @click="openBoard(board)">
+            <h3>{{ board.name }}</h3>
+            <p>{{ board.description }}</p>
+          </div>
+          <div class="board add list-inline-item" @click="createBoard(team)">
+            <font-awesome-icon icon="plus" />
+            <div>{{ $t('homePage.createNewBoard') }}</div>
+          </div>
         </div>
       </div>
+
+      <div class="create-team-wrapper">
+        <button class="btn btn-link" @click="createTeam()">+ {{ $t('homePage.createNewTeam') }}</button>
+      </div>
     </div>
+    <CreateBoardModal
+      :teamId="selectedTeamId"
+      @created="onBoardCreated" />
+    <CreateTeamModal />
   </div>
 </template>
 
 <script>
-import 'bootstrap/dist/js/bootstrap.min'
+import $ from 'jquery'
+import PageHeader from '@/components/PageHeader.vue'
+import CreateBoardModal from '@/modals/CreateBoardModal.vue'
+import CreateTeamModal from '@/modals/CreateTeamModal.vue'
 import { mapGetters } from 'vuex'
 export default {
-  name: 'PageHeader',
+  name: 'HomePage',
+  data () {
+    return {
+      selectedTeamId: 0
+    }
+  },
   computed: {
     ...mapGetters([
-      'user',
-      'hasBoards',
       'personalBoards',
       'teamBoards'
     ])
   },
-  created () {
-    this.$store.dispatch('getMyData')
+  components: {
+    PageHeader,
+    CreateBoardModal,
+    CreateTeamModal
   },
   methods: {
-    goHome () {
-      this.$router.push({name: 'home'})
-    },
     openBoard (board) {
-      this.$router.push({name: 'board', params: { boardId: board.id }})
+      this.$router.push({name: 'board', params: {boardId: board.id}})
+    },
+    createBoard (team) {
+      this.selectedTeamId = team ? team.id : 0
+      $('#createBoardModal').modal('show')
+    },
+    createTeam () {
+      $('#createTeamModal').modal('show')
+    },
+    onBoardCreated (boardId) {
+      this.$router.push({name: 'board', params: {boardId: boardId}})
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.page-header {
-  padding: 9px 10px 8px;
-  border-bottom: 1px solid #eee;
-  .logo {
-    color: #444;
-    height: 25px;
-    width: 115px;
-    margin-top: 2px;
-    cursor: pointer;
-    .home-icon {
-      font-size: 20px;
-      vertical-align: middle;
-    }
-    img {
-      margin-left: 5px;
-      margin-top: 6px;
-      width: 80px;
-      // vertical-align: bottom;
+.boards-container {
+  padding: 0 35px;
+  h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: 400;
+  }
+  .boards-section {
+    margin: 30px 10px;
+    .boards {
+      .board {
+        width: 270px;
+        height: 110px;
+        border-radius: 5px;
+        background-color: #377EF6;
+        color: #fff;
+        padding: 15px;
+        margin-right: 10px;
+        cursor: pointer;
+        h3 {
+          font-size: 16px;
+        }
+        p {
+          line-height: 1.2;
+          font-size: 90%;
+          font-weight: 100;
+          color: rgba(255, 255, 255, 0.70)
+        }
+      }
+      .add {
+        background-color: #f4f4f4;
+        color: #666;
+        text-align: center;
+        padding-top: 30px;
+        font-weight: 400;
+      }
     }
   }
-  .boards-menu-toggle {
-    padding-left: 20px;
-    width: 100px;
-  }
-  .profile-menu-toggle {
-    width: 215px;
-    text-align: right;
-  }
-  .search-box {
-    .search-wrapper {
-      width: 300px;
-      margin: 0 auto;
-      position: relative;
-    }
-    .search-icon {
-      position: absolute;
-      top: 8px;
-      left: 8px;
+  .create-team-wrapper {
+    .btn-link {
       color: #666;
-    }
-    input {
-      padding-left: 30px;
-      height: calc(1.8125rem + 5px);
-      font-size: 1rem;
-      border: 1px solid #eee;
-      border-radius: 5px;
-    }
-    input:focus {
-      border: 1px solid #377EF6;
+      text-decoration: underline;
     }
   }
-}
-.dropdown-toggle {
-  padding: 2px 5px !important;
 }
 </style>

@@ -1,83 +1,130 @@
 <template>
-  <div>
-    <PageHeader />
-    <div class="boards-container">
-      <div class="boards-section">
-        <h2 class="section-title">Personal Boards</h2>
-        <div class="boards d-flex align-content-start flex-wrap">
-          <div class="board list-inline-item">
-            <h3>vuejs.spring-boot.mysql</h3>
-            <p>
-              An implementation of TaskAgile application with Vue.js, Spring Boot, and MySQL
-            </p>
-          </div>
-          <div class="board add list-inline-item">
-            <font-awesome-icon icon="plus" />
-            <div>Create New Board</div>
+  <div class="page-header d-flex align-content-center">
+    <div class="logo" @click="goHome()">
+      <font-awesome-icon icon="home" class="home-icon" />
+      <img src="/static/images/logo.png">
+    </div>
+    <div class="boards-menu-toggle">
+      <div class="dropdown">
+        <button class="btn dropdown-toggle" type="button" id="boardsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Boards
+        </button>
+        <div class="dropdown-menu" aria-labelledby="boardsMenu">
+          <div v-show="!hasBoards" class="dropdown-item">No boards</div>
+          <div v-show="hasBoards">
+            <h6 class="dropdown-header" v-show="personalBoards.length">Personal Boards</h6>
+            <button v-for="board in personalBoards" v-bind:key="board.id" @click="openBoard(board)"
+                    class="dropdown-item" type="button">{{ board.name }}</button>
+            <div v-for="team in teamBoards" v-bind:key="'t' + team.id">
+              <h6 class="dropdown-header">{{ team.name }}</h6>
+              <button v-for="board in team.boards" v-bind:key="board.id" @click="openBoard(board)"
+                      class="dropdown-item" type="button">{{ board.name }}</button>
+            </div>
           </div>
         </div>
       </div>
-      <div class="create-team-wrapper">
-        <button class="btn btn-link">+ Create New Team</button>
+    </div>
+    <div class="search-box flex-fill">
+      <div class="search-wrapper">
+        <font-awesome-icon icon="search" class="search-icon" />
+        <input type="text" placeholder="Search" class="form-control form-control-sm" />
+      </div>
+    </div>
+    <div class="profile-menu-toggle">
+      <div class="dropdown">
+        <button class="btn dropdown-toggle" type="button" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ user.name }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="profileMenu">
+          <button class="dropdown-item" type="button">Profile</button>
+          <button class="dropdown-item" type="button">Sign Out</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import PageHeader from '@/components/PageHeader.vue'
+import 'bootstrap/dist/js/bootstrap.min'
+import { mapGetters } from 'vuex'
 export default {
-  name: 'HomePage',
-  components: {
-    PageHeader
+  name: 'PageHeader',
+  computed: {
+    ...mapGetters([
+      'user',
+      'hasBoards',
+      'personalBoards',
+      'teamBoards'
+    ])
+  },
+  created () {
+    this.$store.dispatch('getMyData')
+  },
+  methods: {
+    goHome () {
+      this.$router.push({name: 'home'})
+    },
+    openBoard (board) {
+      this.$router.push({name: 'board', params: { boardId: board.id }})
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.boards-container {
-  padding: 0 35px;
-  h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    font-weight: 400;
-  }
-  .boards-section {
-    margin: 30px 10px;
-    .boards {
-      .board {
-        width: 270px;
-        height: 110px;
-        border-radius: 5px;
-        background-color: #377EF6;
-        color: #fff;
-        padding: 15px;
-        margin-right: 10px;
-        cursor: pointer;
-        h3 {
-          font-size: 16px;
-        }
-        p {
-          line-height: 1.2;
-          font-size: 90%;
-          font-weight: 100;
-          color: rgba(255, 255, 255, 0.70)
-        }
-      }
-      .add {
-        background-color: #f4f4f4;
-        color: #666;
-        text-align: center;
-        padding-top: 30px;
-        font-weight: 400;
-      }
+.page-header {
+  padding: 9px 10px 8px;
+  border-bottom: 1px solid #eee;
+  .logo {
+    color: #444;
+    height: 25px;
+    width: 115px;
+    margin-top: 2px;
+    cursor: pointer;
+    .home-icon {
+      font-size: 20px;
+      vertical-align: middle;
+    }
+    img {
+      margin-left: 5px;
+      margin-top: 6px;
+      width: 80px;
+      // vertical-align: bottom;
     }
   }
-  .create-team-wrapper {
-    .btn-link {
+  .boards-menu-toggle {
+    padding-left: 20px;
+    width: 100px;
+  }
+  .profile-menu-toggle {
+    width: 215px;
+    text-align: right;
+  }
+  .search-box {
+    .search-wrapper {
+      width: 300px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .search-icon {
+      position: absolute;
+      top: 8px;
+      left: 8px;
       color: #666;
-      text-decoration: underline;
+    }
+    input {
+      padding-left: 30px;
+      height: calc(1.8125rem + 5px);
+      font-size: 1rem;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+    input:focus {
+      border: 1px solid #377EF6;
     }
   }
+}
+.dropdown-toggle {
+  padding: 2px 5px !important;
 }
 </style>

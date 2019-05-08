@@ -32,6 +32,7 @@
 import $ from 'jquery'
 import { required } from 'vuelidate/lib/validators'
 import teamService from '@/services/teams'
+
 export default {
   name: 'CreateTeamModal',
   data () {
@@ -60,6 +61,7 @@ export default {
       if (this.$v.$invalid) {
         return
       }
+
       teamService.create(this.team).then((createdTeam) => {
         this.$store.dispatch('addTeam', createdTeam)
         this.close()

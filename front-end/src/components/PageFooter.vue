@@ -1,27 +1,19 @@
 <template>
   <footer class="footer">
-    <span class="copyright">&copy; 2019 TaskManager.com</span>
+    <span class="copyright">&copy; 2018 TaskAgile.com</span>
     <ul class="footer-links list-inline float-right">
-      <li class="list-inline-item">
-        <a href="#">About</a>
-      </li>
-      <li class="list-inline-item">
-        <a href="#">Terms of Service</a>
-      </li>
-      <li class="list-inline-item">
-        <a href="#">Privacy Policy</a>
-      </li>
-      <li class="list-inline-item">
-        <a href="https://github.com/UmmmUsername/TaskManager" target="_blank">GitHub</a>
-      </li>
+      <li class="list-inline-item"><a href="#">About</a></li>
+      <li class="list-inline-item"><a href="#">Terms of Service</a></li>
+      <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+      <li class="list-inline-item"><a href="https://github.com/taskagile/vuejs.spring-boot.mysql" target="_blank">GitHub</a></li>
     </ul>
   </footer>
 </template>
 
 <script>
 export default {
-  name: "PageFooter"
-};
+  name: 'PageFooter'
+}
 </script>
 
 <style lang="scss" scoped>
@@ -32,9 +24,11 @@ export default {
   line-height: 40px;
   border-top: 1px solid #ddd;
   margin-top: 50px;
+
   .list-inline-item {
     margin-right: 10px;
   }
+
   a {
     color: #666;
   }

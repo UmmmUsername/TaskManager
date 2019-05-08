@@ -22,7 +22,7 @@ public class User extends AbstractBaseEntity {
     @Column(name = "email_address", nullable = false, length = 100, unique = true)
     private String emailAddress;
 
-    @Column(name = "password", nullable = false, length = 30)
+    @Column(name = "password", nullable = false, length = 256)
     private String password;
 
     @Column(name = "first_name", nullable = false, length = 45)
@@ -35,11 +35,8 @@ public class User extends AbstractBaseEntity {
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
 
-    public User() {
-    }
-
     /**
-     * Create new user during registration
+     * Create new user
      */
     public static User create(String username, String emailAddress, String password) {
         User user = new User();
@@ -52,8 +49,13 @@ public class User extends AbstractBaseEntity {
         return user;
     }
 
-    public Long getId() {
-        return id;
+    public void updateName(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public UserId getId() {
+        return new UserId(id);
     }
 
     public String getUsername() {

@@ -61,13 +61,13 @@ public class UserServiceImpl implements UserService {
                 command.getPassword());
 
 //        sendWelcomeMessage(newUser);
-        domainEventPublisher.publish(new UserRegisteredEvent(newUser));
+        domainEventPublisher.publish(new UserRegisteredEvent(this, newUser));
     }
 
     private void sendWelcomeMessage(User user) {
         mailManager.send(
                 user.getEmailAddress(),
-                "Welcome to TaskManager",
+                "Welcome to TaskAgile",
                 "welcome.ftl",
                 MessageVariable.from("user", user)
         );

@@ -30,5 +30,34 @@ module.exports = {
       .assert.urlEquals(browser.launchUrl + 'login')
       .end()
   },
-  
+  'login with username': function (browser) {
+    const loginPage = browser.page.LoginPage()
+    const homePage = browser.page.HomePage()
+    loginPage
+      .navigate()
+      .login(data.username, data.password)
+
+    browser.pause(2000)
+
+    homePage
+      .navigate()
+      .assert.visible('@logoImage')
+
+    browser.end()
+  },
+  'login with email address': function (browser) {
+    const loginPage = browser.page.LoginPage()
+    const homePage = browser.page.HomePage()
+    loginPage
+      .navigate()
+      .login(data.emailAddress, data.password)
+
+    browser.pause(2000)
+
+    homePage
+      .navigate()
+      .assert.visible('@logoImage')
+
+    browser.end()
+  }
 }

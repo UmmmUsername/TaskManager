@@ -31,3 +31,4 @@ src/main/resources/static/favicon.ico
 src/main/resources/static/js/
 src/main/resources/templates/index.html
 src/main/resources/static/images/
+spy.log

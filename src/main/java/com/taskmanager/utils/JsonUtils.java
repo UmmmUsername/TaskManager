@@ -20,8 +20,7 @@ public final class JsonUtils {
         try {
             return mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            log.error("Failed to convert object to JSON string", e);
-            return null;
+            throw new RuntimeException("Failed to convert object to JSON string", e);
         }
     }
 
@@ -38,5 +37,4 @@ public final class JsonUtils {
     public static void write(Writer writer, Object value) throws IOException {
         new ObjectMapper().writeValue(writer, value);
     }
-
 }

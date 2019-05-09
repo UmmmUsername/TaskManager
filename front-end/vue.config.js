@@ -5,8 +5,11 @@ module.exports = {
     proxy: {
       '/api/*': {
         target: 'http://localhost:8080'
+      },
+      '/rt/*': {
+        target: 'http://localhost:8080'
       }
-    },
+    }
   },
   configureWebpack: {
     entry: {

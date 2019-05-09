@@ -127,6 +127,7 @@ export default {
             }
           })
         })
+        vm.$rt.subscribe('/board/' + vm.board.id, vm.onRealTimeUpdated)
       })
     }).catch(error => {
       notify.error(error.message)
@@ -137,10 +138,11 @@ export default {
   },
   beforeDestroy () {
     this.$el.removeEventListener('click', this.dismissActiveForms)
+    this.$rt.unsubscribe('/board/' + this.board.id, this.onRealTimeUpdated)
   },
   methods: {
     dismissActiveForms (event) {
-      console.log('dismissing forms')
+      console.log('[BoardPage] Dismissing forms')
       let dismissAddCardForm = true
       let dismissAddListForm = true
       if (event.target.closest('.add-card-form') || event.target.closest('.add-card-button')) {
@@ -230,6 +232,7 @@ export default {
       cardList.cardForm.open = false
     },
     onCardListDragEnded (event) {
+      console.log('[BoardPage] Card list drag ended', event)
       // Get the latest card list order and send it to the back-end
       const positionChanges = {
         boardId: this.board.id,
@@ -246,7 +249,7 @@ export default {
       })
     },
     onCardDragEnded (event) {
-      console.log('card drag ended', event)
+      console.log('[BoardPage] Card drag ended', event)
       // Get the card list that have card orders changed
       const fromListId = event.from.dataset.listId
       const toListId = event.to.dataset.listId
@@ -271,6 +274,8 @@ export default {
       cardService.changePositions(positionChanges).catch(error => {
         notify.error(error.message)
       })
+    },
+    onRealTimeUpdated (updates) {
     }
   }
 }
@@ -428,8 +433,8 @@ export default {
                   }
                 }
                 .ghost-card {
-                  background-color: #377EF6 !important;
-                  color: #377EF6 !important;
+                  background-color: #ccc !important;
+                  color: #ccc !important;
                 }
               }
             }

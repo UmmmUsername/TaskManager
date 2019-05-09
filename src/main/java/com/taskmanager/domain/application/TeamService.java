@@ -2,6 +2,7 @@ package com.taskmanager.domain.application;
 
 import com.taskmanager.domain.application.commands.CreateTeamCommand;
 import com.taskmanager.domain.model.team.Team;
+import com.taskmanager.domain.model.team.TeamId;
 import com.taskmanager.domain.model.user.UserId;
 
 import java.util.List;
@@ -17,10 +18,19 @@ public interface TeamService {
     List<Team> findTeamsByUserId(UserId userId);
 
     /**
+     * Find a team by its id
+     *
+     * @param teamId the id of the team
+     * @return a team instance or null if not found
+     */
+    Team findById(TeamId teamId);
+
+    /**
      * Create a new team
      *
      * @param command the command instance
      * @return the newly created team
      */
     Team createTeam(CreateTeamCommand command);
+
 }
